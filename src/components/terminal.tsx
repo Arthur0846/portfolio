@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { profile, sections } from "@/lib/profile";
 
-type Line = { kind: "input" | "output"; text: string };
+type Line = { kind: "input" | "output"; text: string; animate?: boolean };
 
 type Result = {
   output: string[];
@@ -36,13 +36,33 @@ const HELP = [
   "Tab completa o comando. Setas para cima e para baixo navegam no histórico.",
 ];
 
-const WELCOME: Line[] = [
-  { kind: "output", text: profile.name },
-  { kind: "output", text: `${profile.course}, ${profile.university}` },
-  { kind: "output", text: "" },
-  { kind: "output", text: SECTION_IDS },
-  { kind: "output", text: "help lista os comandos." },
+const BOOT_COMMAND = "whoami";
+
+const BOOT_OUTPUT = [profile.name, `${profile.course}, ${profile.university}`];
+
+const WELCOME_TAIL = [
+  "",
+  SECTION_IDS,
+  "Digite help para ver os comandos.",
 ];
+
+const LINE_STAGGER = 90;
+
+function bootLines(): Line[] {
+  return [
+    { kind: "input", text: BOOT_COMMAND, animate: true },
+    ...BOOT_OUTPUT.map((text) => ({
+      kind: "output" as const,
+      text,
+      animate: true,
+    })),
+    ...WELCOME_TAIL.map((text) => ({
+      kind: "output" as const,
+      text,
+      animate: true,
+    })),
+  ];
+}
 
 function resolveSection(token: string) {
   const value = token.toLowerCase();
@@ -113,13 +133,53 @@ function run(raw: string): Result {
 export default function Terminal() {
   const router = useRouter();
   const pathname = usePathname();
-  const [lines, setLines] = useState<Line[]>(WELCOME);
+  const [lines, setLines] = useState<Line[]>([]);
+  const [typed, setTyped] = useState("");
+  const [phase, setPhase] = useState<"typing" | "output" | "ready">("typing");
   const [value, setValue] = useState("");
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const boot = bootLines();
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reduced) {
+      Promise.resolve().then(() => {
+        setLines(boot);
+        setPhase("ready");
+      });
+      return;
+    }
+
+    let char = 0;
+    let finisher = 0;
+
+    const typer = window.setInterval(() => {
+      char += 1;
+      setTyped(BOOT_COMMAND.slice(0, char));
+
+      if (char >= BOOT_COMMAND.length) {
+        window.clearInterval(typer);
+        setLines(boot);
+        setPhase("output");
+        finisher = window.setTimeout(
+          () => setPhase("ready"),
+          boot.length * LINE_STAGGER + 500,
+        );
+      }
+    }, 75);
+
+    return () => {
+      window.clearInterval(typer);
+      window.clearTimeout(finisher);
+    };
+  }, []);
 
   useEffect(() => {
     const node = outputRef.current;
@@ -217,7 +277,7 @@ export default function Terminal() {
       className="overflow-hidden rounded-md border border-ink-line bg-ink-raised transition-colors focus-within:border-signal"
       onClick={() => inputRef.current?.focus()}
     >
-      <div className="flex items-center justify-between gap-3 border-b border-ink-line px-4 py-2.5">
+      <div className="flex items-center justify-between gap-3 border-b border-ink-line px-4 py-3">
         <span className="font-mono text-xs text-muted">terminal</span>
         <span className="font-mono text-xs text-muted">arthur@ufsm: zsh</span>
       </div>
@@ -227,16 +287,19 @@ export default function Terminal() {
         role="log"
         aria-live="polite"
         aria-label="Saída do terminal"
-        className="h-[300px] overflow-y-auto p-4 font-mono text-[13px] leading-relaxed md:h-[340px]"
+        className="h-[320px] overflow-y-auto p-5 font-mono text-[14px] leading-relaxed md:h-[420px]"
       >
         {lines.map((line, index) => (
           <p
             key={index}
-            className={
-              line.kind === "input"
-                ? "whitespace-pre-wrap break-words text-paper"
-                : "whitespace-pre-wrap break-words text-muted"
+            style={
+              line.animate ? { animationDelay: `${index * LINE_STAGGER}ms` } : undefined
             }
+            className={[
+              "whitespace-pre-wrap break-words",
+              line.kind === "input" ? "text-paper" : "text-muted",
+              line.animate ? "line-in" : "",
+            ].join(" ")}
           >
             {line.kind === "input" ? (
               <>
@@ -248,36 +311,46 @@ export default function Terminal() {
           </p>
         ))}
 
-        <div className="flex items-center gap-2 pt-1">
-          <span className="shrink-0 text-signal" aria-hidden="true">
-            {PROMPT}
-          </span>
-          <span className="relative min-w-0 flex-1">
-            <span
-              aria-hidden="true"
-              className="text-paper whitespace-pre-wrap break-words"
-            >
-              {value}
+        {phase === "typing" ? (
+          <div className="flex items-center gap-2 pt-1" aria-hidden="true">
+            <span className="shrink-0 text-signal">{PROMPT}</span>
+            <span className="whitespace-pre-wrap break-words text-paper">
+              {typed}
             </span>
-            <span
-              aria-hidden="true"
-              className="blink ml-px inline-block h-[1.05em] w-[0.6em] translate-y-[0.18em] bg-signal"
-            />
-            <input
-              ref={inputRef}
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              onKeyDown={handleKeyDown}
-              className="absolute inset-0 h-full w-full cursor-text opacity-0"
-              type="text"
-              aria-label="Comando do terminal"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              spellCheck={false}
-            />
-          </span>
-        </div>
+            <span className="blink ml-px inline-block h-[1.05em] w-[0.6em] translate-y-[0.18em] bg-signal" />
+          </div>
+        ) : phase === "ready" ? (
+          <div className="line-in flex items-center gap-2 pt-1">
+            <span className="shrink-0 text-signal" aria-hidden="true">
+              {PROMPT}
+            </span>
+            <span className="relative min-w-0 flex-1">
+              <span
+                aria-hidden="true"
+                className="whitespace-pre-wrap break-words text-paper"
+              >
+                {value}
+              </span>
+              <span
+                aria-hidden="true"
+                className="blink ml-px inline-block h-[1.05em] w-[0.6em] translate-y-[0.18em] bg-signal"
+              />
+              <input
+                ref={inputRef}
+                value={value}
+                onChange={(event) => setValue(event.target.value)}
+                onKeyDown={handleKeyDown}
+                className="absolute inset-0 h-full w-full cursor-text opacity-0"
+                type="text"
+                aria-label="Comando do terminal"
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+              />
+            </span>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ type PageShellProps = {
 
 export default function PageShell({ title, intro, children }: PageShellProps) {
   return (
-    <div className="mx-auto w-full max-w-[1080px] px-6 py-14 md:px-8 md:py-20">
+    <div className="mx-auto w-full max-w-[1280px] px-6 py-14 md:px-8 lg:px-10 md:py-20">
       <Link
         href="/"
         className="inline-flex text-sm text-muted transition-colors hover:text-paper"
@@ -30,3 +30,4 @@ export default function PageShell({ title, intro, children }: PageShellProps) {
     </div>
   );
 }
+

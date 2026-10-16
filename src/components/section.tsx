@@ -10,7 +10,7 @@ type SectionProps = {
 export default function Section({ id, title, children }: SectionProps) {
   return (
     <section id={id} className="scroll-mt-20 border-t border-ink-line py-16 md:py-24">
-      <div className="mx-auto w-full max-w-[1080px] px-6 md:px-8">
+      <div className="mx-auto w-full max-w-[1280px] px-6 md:px-8 lg:px-10">
         <h2 className="font-display text-3xl font-medium tracking-tight text-paper md:text-4xl">
           {title}
         </h2>
@@ -19,3 +19,4 @@ export default function Section({ id, title, children }: SectionProps) {
     </section>
   );
 }
+

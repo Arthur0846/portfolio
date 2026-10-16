@@ -10,7 +10,7 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-ink-line bg-ink">
-      <div className="mx-auto flex h-16 w-full max-w-[1080px] items-center justify-between gap-6 px-6 md:px-8">
+      <div className="mx-auto flex h-16 w-full max-w-[1280px] items-center justify-between gap-6 px-6 md:px-8 lg:px-10">
         <Link href="/" className="flex items-baseline gap-3" aria-label="Início">
           <span className="font-display text-[17px] font-medium tracking-tight text-paper">
             {profile.name}
@@ -62,3 +62,4 @@ export default function SiteHeader() {
     </header>
   );
 }
+
