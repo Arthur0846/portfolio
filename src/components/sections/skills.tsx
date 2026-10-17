@@ -1,4 +1,5 @@
 import Section from "@/components/section";
+import { TechIcon } from "@/components/tech-icon";
 import { skillGroups } from "@/lib/profile";
 
 export default function Skills() {
@@ -8,13 +9,18 @@ export default function Skills() {
         {skillGroups.map((group) => (
           <div
             key={group.category}
-            className="grid grid-cols-1 gap-2 border-b border-ink-line py-5 sm:grid-cols-[220px_minmax(0,1fr)] sm:items-baseline sm:gap-8"
+            className="grid grid-cols-1 gap-4 border-b border-ink-line py-6 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center sm:gap-10"
           >
             <dt className="text-sm text-muted">{group.category}</dt>
-            <dd className="flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-paper">
-              {group.items.map((item) => (
-                <span key={item}>{item}</span>
-              ))}
+            <dd>
+              <ul className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-4">
+                {group.items.map((item) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <TechIcon name={item} className="h-6 w-6 shrink-0" />
+                    <span className="text-sm text-paper">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </dd>
           </div>
         ))}

@@ -26,3 +26,14 @@ Tailwind CSS. O gráfico do laboratório é desenhado com o Chart.js.
   <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Chart.js" />
 </p>
+
+## Créditos
+
+Os ícones de tecnologias na seção de habilidades vêm do
+[Devicon](https://github.com/devicons/devicon) (licença MIT). Alguns logos têm
+licença própria: o do Git é de Jason Long (CC BY 3.0), o do HTML5 é do W3C
+(CC BY 3.0) e o do JavaScript é do projeto logo.js (MIT). Os logos do GitHub e
+do MySQL aparecem na versão branca, indicada para fundos escuros.
+
+Todas as marcas pertencem aos seus respectivos donos. Elas aparecem apenas para
+identificar as tecnologias usadas, sem qualquer vínculo ou endosso.
