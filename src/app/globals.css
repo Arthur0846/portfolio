@@ -107,6 +107,43 @@
   animation: mask-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
+.scroll-reveal-wipe {
+  opacity: 0;
+}
+
+.scroll-reveal-wipe.is-visible {
+  opacity: 1;
+  animation: reveal 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.scroll-reveal-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.scroll-reveal-mask-inner {
+  display: block;
+  transform: translateY(115%);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-mask.is-visible .scroll-reveal-mask-inner {
+  transform: translateY(0);
+}
+
+@media (scripting: none), print {
+  .scroll-reveal-wipe {
+    opacity: 1;
+    animation: none;
+  }
+
+  .scroll-reveal-mask-inner {
+    transform: none;
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -117,5 +154,15 @@
   .reveal,
   .mask-up {
     animation: none;
+  }
+
+  .scroll-reveal-wipe {
+    opacity: 1;
+    animation: none;
+  }
+
+  .scroll-reveal-mask-inner {
+    transform: none;
+    transition: none;
   }
 }

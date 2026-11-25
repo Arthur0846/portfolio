@@ -1,3 +1,4 @@
+import Reveal from "@/components/reveal";
 import Terminal from "@/components/terminal";
 import { profile } from "@/lib/profile";
 import { buttonPrimaryClass, linkUnderlineClass } from "@/lib/ui";
@@ -74,10 +75,14 @@ export default function Hero() {
 
           <div className="flex flex-col justify-center lg:border-l lg:border-ink-line lg:pl-16">
             <Terminal />
-            <p className="mt-4 text-sm leading-relaxed text-muted">
+            <Reveal
+              as="p"
+              delay={280}
+              className="mt-4 text-sm leading-relaxed text-muted"
+            >
               Digite o nome de uma seção e pressione Enter. O menu no topo
               também funciona.
-            </p>
+            </Reveal>
           </div>
         </div>
       </div>

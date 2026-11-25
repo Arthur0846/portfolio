@@ -1,3 +1,4 @@
+import Reveal from "@/components/reveal";
 import Section from "@/components/section";
 import { TechIcon } from "@/components/tech-icon";
 import { skillGroups } from "@/lib/profile";
@@ -6,9 +7,11 @@ export default function Skills() {
   return (
     <Section id="habilidades" title="Habilidades e tecnologias">
       <dl className="border-t border-ink-line">
-        {skillGroups.map((group) => (
-          <div
+        {skillGroups.map((group, index) => (
+          <Reveal
+            as="div"
             key={group.category}
+            delay={index * 70}
             className="grid grid-cols-1 gap-4 border-b border-ink-line py-6 sm:grid-cols-[200px_minmax(0,1fr)] sm:items-center sm:gap-10"
           >
             <dt className="text-sm text-muted">{group.category}</dt>
@@ -22,13 +25,17 @@ export default function Skills() {
                 ))}
               </ul>
             </dd>
-          </div>
+          </Reveal>
         ))}
       </dl>
-      <p className="mt-6 max-w-[64ch] text-sm leading-relaxed text-muted">
+      <Reveal
+        as="p"
+        delay={120}
+        className="mt-6 max-w-[64ch] text-sm leading-relaxed text-muted"
+      >
         Listo o que consigo explicar numa conversa técnica e usar sem consultar.
         O resto ficou de fora de propósito.
-      </p>
+      </Reveal>
     </Section>
   );
 }
